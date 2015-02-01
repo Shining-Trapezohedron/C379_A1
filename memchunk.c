@@ -1,6 +1,6 @@
 /*
     memchunk- A simple program to experiment with system memory by James Devito
-    Copyright (C) 2015  James Devito
+    Copyright (C) 2015  James Devito 1279233
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ int writable(char * myLoc);
 int find_RW(char* myLoc);
 void handler( int sig );
 
-
+int chunkCount; //keep track of number of chunks found
 
 int get_mem_layout (struct memchunk *chunk_list, int size){
   /*
@@ -48,15 +48,17 @@ int get_mem_layout (struct memchunk *chunk_list, int size){
   int prevRW = 0;
   int pageSize = getpagesize();
   int pages = 0xffffffff / pageSize;//Found it!! had to divide page size
-  fprintf(stderr,"pages %d", pages);
+  fprintf(stderr,"NUMBER OF PAGES %d \n", pages);
   //Logic applied from
   //http://stackoverflow.com/questions/7910240/how-to-calculate-page-table-size
   char * pageAddr =(char*) 0x00000000; //initial address 
-  int chunkCount = 0; //keep track of number of chunks found
+ 
   
   for(int curPage = 0; curPage < pages; curPage++) {
     prevRW = curRW;
     curRW = find_RW(pageAddr);
+    //fprintf(stderr, "prevRW : %d curRW : %d\n",prevRW, curRW);
+    //sleep(1);
     //fprintf(stderr,"curRW : %d",curRW);
     //what if RW is no go
     if(curRW == -1) {
@@ -66,8 +68,10 @@ int get_mem_layout (struct memchunk *chunk_list, int size){
       //https://msdn.microsoft.com/en-us/library/0ceyyskb.aspx
     }
     if(chunkCount < size){
-      if (curRW == prevRW) chunk_list[chunkCount-1].length += pageSize;
-      //NOTETOSELF: chunkCount-1 may cause issue at -1 may need handling
+      if (curRW == prevRW){
+	chunk_list[chunkCount-1].length += pageSize;
+	//NOTETOSELF: chunkCount-1 may cause issue at -1 may need handling
+      }
       else {
 	//Store info into the struct
 	chunk_list[chunkCount].start = pageAddr;
@@ -79,12 +83,11 @@ int get_mem_layout (struct memchunk *chunk_list, int size){
     else {
       if (curRW != prevRW) chunkCount++;
     }	
-      pageAddr = pageAddr + pageSize;
+    pageAddr = pageAddr + pageSize;
   }
     return chunkCount;
   
 }
-
 
 int readable(char* myLoc) {
   /*
@@ -96,14 +99,15 @@ int readable(char* myLoc) {
     0 : false - cannot read
     1 : true - can read
   */
-  //char checkRead;
+  char checkRead;
   //Signal info taken from
   //http://en.cppreference.com/w/c/program/SIG_types
   signal( SIGSEGV, handler);	
   if(setjmp(buf)==1)return 0; //seg fault
-  //checkRead = *myLoc;
+  checkRead = *myLoc; //Will not work unless I attempt assign
   return 1; //Return readable
 }
+
 
 int writable(char * myLoc) {
   /*
@@ -116,11 +120,12 @@ int writable(char * myLoc) {
     1 : true - can write
   */
   signal(SIGSEGV,handler);
-  //char checkWrite;
+  char checkWrite;
   if(setjmp(buf)==1) return 0; //seg fault
-  //checkWrite = *myLoc;  
+  checkWrite = *myLoc;  //Will not work unless I attempt assign
   return 1;//writable
 }
+
 
 int find_RW(char* myLoc) {
   if(readable(myLoc) ) {
@@ -135,3 +140,4 @@ int find_RW(char* myLoc) {
 void handler( int sig ) {
 	longjmp(buf, 1);
 }
+

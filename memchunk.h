@@ -1,6 +1,6 @@
 /*
     memchunk- A simple program to experiment with system memory by James Devito
-    Copyright (C) 2015  James Devito
+    Copyright (C) 2015  James Devito 1279233
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

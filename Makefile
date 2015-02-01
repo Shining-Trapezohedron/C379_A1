@@ -1,4 +1,3 @@
-
 memchunk: memchunk.o test.o
 	gcc -std=c99 -m32 -Wall memchunk.o test.o -o memchunk
 

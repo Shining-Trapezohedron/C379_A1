@@ -1,3 +1,25 @@
 # C379_A1
+# JAMES DEVITO 1279233
+    memchunk- A simple program to experiment with system memory by James Devito
+    Copyright (C) 2015  James Devito 1279233
 
-A simple program to find number of chunks
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+INSTALLATION AND USAGE INSTRUCTIONS
+Extract the tar file to a directory
+type make in the terminal
+wait for the program to build
+once finished the progam can be run by ./memchunk
+The default value is 10 and may be changed in test.c
